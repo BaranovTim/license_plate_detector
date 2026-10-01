@@ -1,0 +1,17 @@
+{% macro event_rows(events) %}
+<div class="table-wrap"><table>
+  <tr><th>Time</th><th>Device</th><th>Plate</th><th>Image</th><th>Confidence</th><th>Result</th><th>ms</th></tr>
+  {% for e in events %}
+  <tr>
+    <td>{{ (e.captured_at or e.received_at)|replace('T', ' ') }}</td>
+    <td class="muted">{{ e.device_id }}</td>
+    <td class="plate">{{ e.corrected_plate or e.plate or '—' }}{% if e.corrected_plate %} <span class="muted" title="corrected by {{ e.reviewed_by }}">✎</span>{% endif %}</td>
+    <td>{% if e.crop_path %}<img class="crop" src="{{ url_for('image', name=e.crop_path) }}" alt="">{% endif %}</td>
+    <td>{{ '%.0f%%'|format(e.confidence * 100) if e.confidence is not none else '' }}</td>
+    <td>{% if e.kind == 'unrecognized' %}<span class="pill unknown">{{ e.reason or 'unrecognized' }}</span>{% if e.review_status %} <span class="muted">{{ e.review_status }}</span>{% endif %}
+        {% else %}<span class="pill {{ e.decision }}">{{ e.decision }}</span>{% endif %}</td>
+    <td class="muted">{{ e.processing_ms or '' }}</td>
+  </tr>
+  {% else %}<tr><td colspan="7" class="muted">No events yet.</td></tr>{% endfor %}
+</table></div>
+{% endmacro %}

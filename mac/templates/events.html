@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% from "_macros.html" import event_rows %}
+{% block title %}Events{% endblock %}
+{% block body %}
+<h1>Events</h1>
+<form class="inline" style="margin-bottom:12px">
+  <input name="q" value="{{ q }}" placeholder="Plate contains…">
+  <select name="kind">
+    {% for k in ['', 'recognized', 'unrecognized', 'allowed', 'denied'] %}<option value="{{ k }}" {{ 'selected' if k == kind }}>{{ k or 'all' }}</option>{% endfor %}
+  </select>
+  <button>Filter</button>
+</form>
+{{ event_rows(events) }}
+{% endblock %}

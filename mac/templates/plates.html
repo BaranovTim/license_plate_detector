@@ -1,0 +1,27 @@
+{% extends "base.html" %}{% block title %}Allowed plates{% endblock %}
+{% block body %}
+<h1>Allowed plates</h1>
+{% if can('edit_plates') %}
+<div class="card">
+  <form method="post" class="inline">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input name="plate" placeholder="Plate (e.g. ABC123)" class="plate" required>
+    <input name="owner" placeholder="Owner">
+    <input name="note" placeholder="Note">
+    <label class="muted">valid until <input type="date" name="valid_until"></label>
+    <button>Add / update</button>
+  </form>
+</div>
+{% endif %}
+<div class="table-wrap"><table>
+  <tr><th>Plate</th><th>Owner</th><th>Note</th><th>Valid until</th><th>Added by</th><th></th></tr>
+  {% for p in plates %}
+  <tr>
+    <td class="plate">{{ p.plate }}</td><td>{{ p.owner or '' }}</td><td class="muted">{{ p.note or '' }}</td>
+    <td>{% if p.valid_until and p.valid_until < today %}<span class="denied">expired {{ p.valid_until }}</span>{% else %}{{ p.valid_until or 'no expiry' }}{% endif %}</td>
+    <td class="muted">{{ p.created_by }}</td>
+    <td>{% if can('edit_plates') %}<form method="post" class="inline"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="hidden" name="plate" value="{{ p.plate }}"><button name="action" value="delete" class="secondary">Remove</button></form>{% endif %}</td>
+  </tr>
+  {% else %}<tr><td colspan="6" class="muted">No plates yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

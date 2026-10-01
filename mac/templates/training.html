@@ -1,0 +1,21 @@
+{% extends "base.html" %}{% block title %}Training data{% endblock %}
+{% block body %}
+<h1>Training data from unrecognized images</h1>
+<div class="grid">
+  <div class="card stat"><div class="n">{{ n_ocr }}</div><div class="l">labeled plate crops (OCR)</div></div>
+  <div class="card stat"><div class="n">{{ n_det }}</div><div class="l">frames with missed plates (detector)</div></div>
+</div>
+<h2>Why images failed</h2>
+<table><tr><th>Reason</th><th>Count</th></tr>
+{% for r in reasons %}<tr><td>{{ r.reason }}</td><td>{{ r.n }}</td></tr>{% else %}<tr><td colspan="2" class="muted">None yet</td></tr>{% endfor %}
+</table>
+<h2>Export</h2>
+<p><a href="{{ url_for('training_export') }}"><button>Download dataset (.zip)</button></a></p>
+<div class="card">
+  <p><b>ocr/</b> contains plate crops and <code>labels.csv</code> (file, plate), the input format used by the
+  <code>fast-plate-ocr</code> training tools to fine-tune the OCR model.</p>
+  <p><b>detector/</b> contains full frames where no plate was detected. Draw boxes around the plates (e.g. in Roboflow or CVAT)
+  to fine-tune the plate detector.</p>
+  <p class="muted">Fine-tuned ONNX models are copied to the Jetson and selected with <code>OCR_MODEL</code> / <code>DETECTOR_MODEL</code>.</p>
+</div>
+{% endblock %}

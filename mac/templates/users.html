@@ -1,0 +1,29 @@
+{% extends "base.html" %}{% block title %}Users{% endblock %}
+{% block body %}
+<h1>Users</h1>
+<div class="card">
+  <form method="post" class="inline">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input name="username" placeholder="Username" required>
+    <input name="password" type="password" placeholder="Password (8+)" autocomplete="new-password" required>
+    <select name="role">{% for r in roles %}<option>{{ r }}</option>{% endfor %}</select>
+    <button name="action" value="create">Create user</button>
+  </form>
+  <p class="muted" style="margin-bottom:0">admin: everything · operator: allowed plates + review + training data · viewer: read only</p>
+</div>
+<table>
+  <tr><th>User</th><th>Role</th><th>Status</th><th>Created</th><th></th></tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.username }}</td>
+    <td>{% if u.username == session.username %}{{ u.role }}{% else %}
+      <form method="post" class="inline"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="hidden" name="username" value="{{ u.username }}">
+        <select name="role">{% for r in roles %}<option {{ 'selected' if r == u.role }}>{{ r }}</option>{% endfor %}</select>
+        <button name="action" value="role" class="secondary">Set</button></form>{% endif %}</td>
+    <td>{{ 'active' if u.active else 'disabled' }}</td>
+    <td class="muted">{{ u.created_at|replace('T', ' ') }}</td>
+    <td>{% if u.username != session.username %}<form method="post" class="inline"><input type="hidden" name="csrf" value="{{ csrf_token() }}"><input type="hidden" name="username" value="{{ u.username }}"><button name="action" value="toggle" class="secondary">{{ 'Disable' if u.active else 'Enable' }}</button></form>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

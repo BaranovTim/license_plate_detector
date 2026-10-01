@@ -1,0 +1,12 @@
+{% extends "base.html" %}{% block title %}Log in{% endblock %}
+{% block body %}
+<div class="card" style="max-width:340px;margin:60px auto">
+  <h1>ANPR control</h1>
+  <form method="post" style="display:grid;gap:10px">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input name="username" placeholder="Username" autocomplete="username" required autofocus>
+    <input name="password" type="password" placeholder="Password" autocomplete="current-password" required>
+    <button>Log in</button>
+  </form>
+</div>
+{% endblock %}

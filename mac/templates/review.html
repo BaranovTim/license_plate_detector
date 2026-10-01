@@ -1,0 +1,23 @@
+{% extends "base.html" %}{% block title %}Review{% endblock %}
+{% block body %}
+<h1>Review unrecognized images</h1>
+<p class="muted">Type the plate you can see. Labeled images go into the training set (plate crops → OCR model,
+full frames where no plate was found → detector). Discard frames without a car.</p>
+{% for e in events %}
+<div class="card" style="display:grid;grid-template-columns:minmax(0,2fr) minmax(220px,1fr);gap:16px">
+  <div>{% if e.image_path %}<img src="{{ url_for('image', name=e.image_path) }}" style="width:100%;border-radius:6px" alt="">{% else %}<span class="muted">no image</span>{% endif %}</div>
+  <div>
+    <div class="muted">{{ e.captured_at|replace('T', ' ') }} · {{ e.device_id }}</div>
+    <p><span class="pill unknown">{{ e.reason }}</span></p>
+    {% if e.crop_path %}<img src="{{ url_for('image', name=e.crop_path) }}" style="max-width:100%;height:60px" alt="">{% endif %}
+    <p>Best guess: <span class="plate">{{ e.plate or '—' }}</span>{% if e.confidence is not none %} ({{ '%.0f%%'|format(e.confidence * 100) }}){% endif %}</p>
+    <form method="post" action="{{ url_for('review_save', event_id=e.id) }}" class="inline">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+      <input name="plate" value="{{ e.plate or '' }}" placeholder="Plate number" class="plate" size="10">
+      <button name="action" value="label">Save label</button>
+      <button name="action" value="discard" class="secondary">No plate</button>
+    </form>
+  </div>
+</div>
+{% else %}<p class="muted">Nothing to review 🎉</p>{% endfor %}
+{% endblock %}

@@ -1,0 +1,9 @@
+{
+  "additionalFiles": "",
+  "compiler.optimization_flags": "-Os",
+  "customBuildProperties": "",
+  "fqbn": "esp32:esp32:XIAO_ESP32S3:PSRAM=opi",
+  "hardwareFolders": "/Users/timothee8baranov/Library/Arduino15/packages/esp32/hardware/esp32/3.3.12,/Users/timothee8baranov/Library/Arduino15/packages/esp32/hardware/esp32/3.3.12",
+  "otherLibrariesFolders": "/Users/timothee8baranov/Documents/Arduino/libraries",
+  "sketchLocation": "/Users/timothee8baranov/Desktop/projects/anpr-system/esp32/usb_camera"
+}

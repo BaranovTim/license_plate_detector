@@ -1,0 +1,5 @@
+mac/data/
+mac/.venv/
+jetson/config.env
+__pycache__/
+*.jpg

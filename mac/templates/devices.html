@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Devices{% endblock %}
+{% block body %}
+<h1>Devices</h1>
+{% if new_token %}
+<div class="card" style="border-color:var(--warn)">
+  <b>Copy this into jetson/config.env now - it is shown only once:</b>
+  <pre style="white-space:pre-wrap;word-break:break-all">DEVICE_TOKEN={{ new_token }}</pre>
+</div>
+{% endif %}
+<div class="card">
+  <form method="post" class="inline">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+    <input name="device_id" placeholder="Device id (e.g. gate-1)" required>
+    <button>Register / new token</button>
+  </form>
+</div>
+<table>
+  <tr><th>Device</th><th>Last seen</th></tr>
+  {% for d in devices %}<tr><td>{{ d.id }}</td><td>{{ (d.last_seen or 'never')|replace('T', ' ') }}</td></tr>
+  {% else %}<tr><td colspan="2" class="muted">None yet.</td></tr>{% endfor %}
+</table>
+{% endblock %}

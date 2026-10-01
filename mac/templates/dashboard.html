@@ -1,0 +1,36 @@
+{% extends "base.html" %}{% from "_macros.html" import event_rows %}
+{% block title %}Dashboard{% endblock %}
+{% block head %}<meta http-equiv="refresh" content="10">{% endblock %}
+{% block body %}
+<h1>Today</h1>
+<div class="grid">
+  <div class="card stat"><div class="n">{{ stats.recognized or 0 }}</div><div class="l">plates recognized</div></div>
+  <div class="card stat"><div class="n allowed">{{ stats.allowed or 0 }}</div><div class="l">allowed</div></div>
+  <div class="card stat"><div class="n denied">{{ stats.denied or 0 }}</div><div class="l">denied</div></div>
+  <div class="card stat"><div class="n unknown">{{ stats.unrecognized or 0 }}</div><div class="l">not recognized{% if to_review and can('review') %} · <a href="{{ url_for('review') }}">{{ to_review }} to review</a>{% endif %}</div></div>
+  <div class="card stat"><div class="n">{{ stats.avg_ms|int if stats.avg_ms else '—' }}</div><div class="l">ms per image (avg)</div></div>
+</div>
+
+<h2>Devices</h2>
+{% for d in devices %}
+<div class="card">
+  <b>{{ d.id }}</b> <span class="pill {{ 'online' if d.online else 'offline' }}">{{ 'online' if d.online else 'offline' }}</span>
+  <span class="muted">last seen {{ (d.last_seen or 'never')|replace('T', ' ') }}</span>
+  {% if d.s %}
+  <div class="grid" style="margin-top:10px">
+    <div><div class="muted">Camera</div>{% if d.s.camera_ok %}<span class="allowed">OK</span>{% else %}<span class="denied">not connected</span>{% endif %} <span class="muted">{{ d.s.frame_size }}</span></div>
+    <div><div class="muted">Disk free</div>{{ d.s.disk_free_mb }} MB{% if d.s.capture_paused %} <span class="denied">capture paused</span>{% endif %}</div>
+    <div><div class="muted">Waiting / unrecognized</div>{{ d.s.incoming_files }} / {{ d.s.unrecognized_files }} files ({{ d.s.unrecognized_mb }} MB)</div>
+    <div><div class="muted">Not yet sent</div>{{ d.s.outbox }} events</div>
+    <div><div class="muted">Processing</div>{{ d.s.avg_processing_ms or '—' }} ms/image</div>
+    <div><div class="muted">Temperature</div>{{ d.s.cpu_temp_c or '—' }} °C</div>
+    <div><div class="muted">Uptime</div>{{ (d.s.uptime_s // 3600) }} h {{ (d.s.uptime_s % 3600) // 60 }} min</div>
+    <div><div class="muted">Motion events</div>{{ d.s.motion_events }}</div>
+  </div>
+  {% endif %}
+</div>
+{% else %}<p class="muted">No devices registered. {% if can('manage_devices') %}<a href="{{ url_for('devices') }}">Add one</a>.{% endif %}</p>{% endfor %}
+
+<h2>Latest events</h2>
+{{ event_rows(events) }}
+{% endblock %}
